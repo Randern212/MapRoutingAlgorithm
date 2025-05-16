@@ -43,7 +43,9 @@ namespace Graphs
             
             foreach(var edge in vertices[rootID].edges)
             {
-                timeFromRoot[edge.Key] = edge.Value.time + rootTime;
+                if (timeFromRoot[edge.Key]> edge.Value.time + rootTime)
+                    timeFromRoot[edge.Key] = edge.Value.time + rootTime;
+
                 if (nextRootTime > timeFromRoot[edge.Key])
                 {
                     nextRootID = edge.Key;
