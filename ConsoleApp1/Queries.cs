@@ -9,7 +9,13 @@ namespace Queries
 
     class Queury
     {
+        public Queury() { }
 
+        float sourceX;
+        float sourceY;
+        float destinationX;
+        float destinationY;
+        float R;
     }
     class QueryConstructor
     {
