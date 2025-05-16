@@ -18,13 +18,16 @@ namespace Graphs
     {
         public float length;
         public float speed;
-        public float time;
+        public float time => length/speed;
     }
 
     class Graph
     { 
         Dictionary<int, Vertex> vertices;
+        public void findPath(int rootID)
+        {
 
+        }
     }
 
     class GraphConstructor
