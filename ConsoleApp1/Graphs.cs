@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,7 @@ namespace Graphs
     {
         public float positionX;
         public float positionY;
+        Dictionary<int, Edge> edges;
     }
 
     class Edge
@@ -21,6 +23,7 @@ namespace Graphs
 
     class Graph
     { 
+        Dictionary<int, Vertex> vertices;
 
     }
 
