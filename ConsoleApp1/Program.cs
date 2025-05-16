@@ -1,4 +1,5 @@
 ﻿using Graphs;
+using Queries;
 
 namespace main
 {
