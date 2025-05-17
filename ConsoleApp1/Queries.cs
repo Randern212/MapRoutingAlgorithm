@@ -21,35 +21,35 @@ namespace Queries
         Func<float, float, float, float,float> euclideanDistance = (x1, y1, x2, y2) => MathF.Sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2))); 
         public (Queue<int>,int) measureTrip(Graph graph)
         {
-            float minTime = float.MaxValue;
             Dictionary <int,Queue<int>> visitedOrders= new Dictionary<int,Queue<int>>();
             Dictionary<int, float[]> possibleRoots = new Dictionary<int, float[]>();
-            Queue<int> possibleDestinations  = new Queue<int>();
-            int bestRoot = -1;
-            int bestDestination=-1;
-            for (int id = 0; id < graph.vertices.Count; id++)
+            Dictionary<int,float> possibleDestinations  = new Dictionary<int,float>(); 
+            foreach(int id in graph.vertices.Keys) 
             {
-                if (euclideanDistance(sourceX, sourceY, graph.vertices[id].positionX, graph.vertices[id].positionY)<R)
+                float walkToRootDistance = euclideanDistance(sourceX, sourceY, graph.vertices[id].positionX, graph.vertices[id].positionY);
+
+                if (walkToRootDistance<=R)
                 {
-                    possibleRoots[id] = graph.FindPath(id, visitedOrders[id]);
+                    (possibleRoots[id],visitedOrders[id]) = graph.FindPath(id,walkToRootDistance/5);
                 }
-                if (euclideanDistance(destinationX, destinationY, graph.vertices[id].positionX, graph.vertices[id].positionY) < R)
+                float walkToDestinationDistance = euclideanDistance(destinationX, destinationY, graph.vertices[id].positionX, graph.vertices[id].positionY);
+                if ( walkToDestinationDistance <= R)
                 {
-                    possibleDestinations.Enqueue(id);
+                    possibleDestinations[id]= walkToDestinationDistance/5;
                 }
             }
 
-            foreach(int destinationID in possibleDestinations)
+            if (possibleRoots.Count == 0 || possibleDestinations.Count == 0)
+                return (new Queue<int>(), -1);
+            float minTime= float.MaxValue;
+            int bestDestination= possibleDestinations.Min().Key;
+            int bestRoot = -1;
+            foreach(var root in possibleRoots)
             {
-                foreach (int rootID in possibleRoots.Keys)
+                if (minTime > root.Value[bestDestination])
                 {
-                    if (minTime > possibleRoots[rootID][destinationID])
-                    {
-                        minTime = possibleRoots[rootID][destinationID];
-                        bestDestination = destinationID;
-                        bestRoot= rootID;  
-                    }
-                } 
+                    bestRoot = root.Key;
+                }
             }
             return (visitedOrders[bestRoot],bestDestination);
         }

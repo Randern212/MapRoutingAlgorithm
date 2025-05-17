@@ -23,11 +23,12 @@ namespace Graphs
     { 
         public Dictionary<int, Vertex> vertices;
 
-        public float[] FindPath(int rootID, Queue<int> visitedOrder)
+        public (float[],Queue<int>) FindPath(int rootID,float initialTime)
         {
+            Queue<int> visitedOrder= new Queue<int>();
             float[] timeFromRoot = new float[vertices.Count];
             Array.Fill(timeFromRoot, float.MaxValue);
-            timeFromRoot[rootID] = 0;
+            timeFromRoot[rootID] = initialTime;
 
             var priorityQueue = new PriorityQueue<int, float>();
             priorityQueue.Enqueue(rootID, 0);
@@ -38,7 +39,6 @@ namespace Graphs
                 if (timeFromRoot[currentID] == float.MaxValue)
                     break;
 
-                visitedOrder.Enqueue(currentID);
 
                 foreach (var edge in vertices[currentID].edges)
                 {
@@ -48,11 +48,12 @@ namespace Graphs
                     if (newTime < timeFromRoot[neighborID])
                     {
                         timeFromRoot[neighborID] = newTime;
+                        visitedOrder.Enqueue(currentID);
                         priorityQueue.Enqueue(neighborID, newTime);
                     }
                 }
             }
-            return timeFromRoot;
+            return (timeFromRoot,visitedOrder);
         }
     }
 
