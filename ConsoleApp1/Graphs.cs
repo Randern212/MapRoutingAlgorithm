@@ -21,7 +21,7 @@ namespace Graphs
     }
     class Graph
     { 
-        Dictionary<int, Vertex> vertices;
+        public Dictionary<int, Vertex> vertices;
 
         public float[] FindPath(int rootID, Queue<int> visitedOrder)
         {
