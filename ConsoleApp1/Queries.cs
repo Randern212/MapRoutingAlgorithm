@@ -18,14 +18,15 @@ namespace Queries
         float destinationY;
         float R;
         public Queury() { }
-        Func<float, float, float, float,float> euclideanDistance = (x1, y1, x2, y2) => MathF.Sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2))) ; 
-        public void measureTrip(Graph graph)
+        Func<float, float, float, float,float> euclideanDistance = (x1, y1, x2, y2) => MathF.Sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2))); 
+        public (Queue<int>,int) measureTrip(Graph graph)
         {
             float minTime = float.MaxValue;
             Dictionary <int,Queue<int>> visitedOrders= new Dictionary<int,Queue<int>>();
             Dictionary<int, float[]> possibleRoots = new Dictionary<int, float[]>();
             Queue<int> possibleDestinations  = new Queue<int>();
-
+            int bestRoot = -1;
+            int bestDestination=-1;
             for (int id = 0; id < graph.vertices.Count; id++)
             {
                 if (euclideanDistance(sourceX, sourceY, graph.vertices[id].positionX, graph.vertices[id].positionY)<R)
@@ -37,6 +38,20 @@ namespace Queries
                     possibleDestinations.Enqueue(id);
                 }
             }
+
+            foreach(int destinationID in possibleDestinations)
+            {
+                foreach (int rootID in possibleRoots.Keys)
+                {
+                    if (minTime > possibleRoots[rootID][destinationID])
+                    {
+                        minTime = possibleRoots[rootID][destinationID];
+                        bestDestination = destinationID;
+                        bestRoot= rootID;  
+                    }
+                } 
+            }
+            return (visitedOrders[bestRoot],bestDestination);
         }
     }
     class QueryConstructor
