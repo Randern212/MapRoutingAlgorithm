@@ -19,6 +19,11 @@ namespace Queries
     }
     class QueryConstructor
     {
+        public static Queury construct()
+        {
+            Queury queury = new Queury();
 
+            return queury;
+        }
     }
 }

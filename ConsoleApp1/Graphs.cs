@@ -57,7 +57,12 @@ namespace Graphs
 
     class GraphConstructor
     {
+        public static Graph construct()
+        {
+            Graph graph = new Graph();
 
+            return graph; 
+        }
     }
 
 }
