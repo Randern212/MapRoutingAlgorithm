@@ -23,43 +23,36 @@ namespace Graphs
     { 
         Dictionary<int, Vertex> vertices;
 
-        public void findPath(int rootID, Queue<int> visitedVertices)
+        public void FindPath(int rootID, Queue<int> visitedOrder)
         {
             float[] timeFromRoot = new float[vertices.Count];
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                timeFromRoot[i] = float.MaxValue;
-            }
-            findPathRecursive(rootID, 0, visitedVertices,timeFromRoot);
-        }
-        private void findPathRecursive(int rootID,float rootTime, Queue<int> visitedVertices, float[] timeFromRoot)
-        {
+            Array.Fill(timeFromRoot, float.MaxValue);
+            timeFromRoot[rootID] = 0;
 
-           
-            timeFromRoot[rootID] = rootTime;
-            
-            int nextRootID = -1;
-            float nextRootTime=float.MaxValue;
-            
-            foreach(var edge in vertices[rootID].edges)
-            {
-                if (timeFromRoot[edge.Key]> edge.Value.time + rootTime)
-                    timeFromRoot[edge.Key] = edge.Value.time + rootTime;
+            var priorityQueue = new PriorityQueue<int, float>();
+            priorityQueue.Enqueue(rootID, 0);
 
-                if (nextRootTime > timeFromRoot[edge.Key])
+            while (priorityQueue.Count > 0)
+            {
+                var currentID = priorityQueue.Dequeue();
+                if (timeFromRoot[currentID] == float.MaxValue)
+                    break;
+
+                visitedOrder.Enqueue(currentID);
+
+                foreach (var edge in vertices[currentID].edges)
                 {
-                    nextRootID = edge.Key;
-                    nextRootTime = timeFromRoot[edge.Key];
+                    int neighborID = edge.Key;
+                    float newTime = timeFromRoot[currentID] + edge.Value.time;
+
+                    if (newTime < timeFromRoot[neighborID])
+                    {
+                        timeFromRoot[neighborID] = newTime;
+                        priorityQueue.Enqueue(neighborID, newTime);
+                    }
                 }
             }
-            visitedVertices.Enqueue(rootID);
-
-            if (nextRootID < 0 || visitedVertices.Contains(nextRootID))
-                return;
-
-            findPathRecursive(nextRootID, nextRootTime, visitedVertices, timeFromRoot);
         }
-
     }
 
     class GraphConstructor
