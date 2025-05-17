@@ -23,22 +23,24 @@ namespace Graphs
     { 
         Dictionary<int, Vertex> vertices;
 
-        public void FindPath(int rootID, Queue<int> visitedOrder)
+        public float FindPath(int rootID, Queue<int> visitedOrder)
         {
             float[] timeFromRoot = new float[vertices.Count];
             Array.Fill(timeFromRoot, float.MaxValue);
             timeFromRoot[rootID] = 0;
+            float totalTime = 0;
 
             var priorityQueue = new PriorityQueue<int, float>();
             priorityQueue.Enqueue(rootID, 0);
 
             while (priorityQueue.Count > 0)
             {
-                var currentID = priorityQueue.Dequeue();
+                int currentID = priorityQueue.Dequeue();
                 if (timeFromRoot[currentID] == float.MaxValue)
                     break;
 
                 visitedOrder.Enqueue(currentID);
+                totalTime += timeFromRoot[currentID];
 
                 foreach (var edge in vertices[currentID].edges)
                 {
@@ -52,6 +54,7 @@ namespace Graphs
                     }
                 }
             }
+            return totalTime*60; //*60 to convert it to minutes
         }
     }
 
