@@ -16,13 +16,12 @@ namespace Queries
         float sourceY;
         float destinationX;
         float destinationY;
-        float R;
+        float R; //in kilometers
         public Queury() { }
         Func<float, float, float, float,float> euclideanDistance = (x1, y1, x2, y2) => MathF.Sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2))); 
-        public (Queue<int>,int) measureTrip(Graph graph)
+        public (Queue<int>,float) measureTrip(Graph graph)
         {
-            Dictionary <int,Queue<int>> visitedOrders= new Dictionary<int,Queue<int>>();
-            Dictionary<int, float[]> possibleRoots = new Dictionary<int, float[]>();
+            Dictionary<int, float> possibleRoots = new Dictionary<int, float>();
             Dictionary<int,float> possibleDestinations  = new Dictionary<int,float>(); 
             foreach(int id in graph.vertices.Keys) 
             {
@@ -30,7 +29,7 @@ namespace Queries
 
                 if (walkToRootDistance<=R)
                 {
-                    (possibleRoots[id],visitedOrders[id]) = graph.FindPath(id,walkToRootDistance/5);
+                    possibleRoots[id]=walkToRootDistance/5;
                 }
                 float walkToDestinationDistance = euclideanDistance(destinationX, destinationY, graph.vertices[id].positionX, graph.vertices[id].positionY);
                 if ( walkToDestinationDistance <= R)
@@ -39,19 +38,20 @@ namespace Queries
                 }
             }
 
-            if (possibleRoots.Count == 0 || possibleDestinations.Count == 0)
-                return (new Queue<int>(), -1);
-            float minTime= float.MaxValue;
-            int bestDestination= possibleDestinations.Min().Key;
-            int bestRoot = -1;
-            foreach(var root in possibleRoots)
+            Queue<int> visitedOrder = new Queue<int>();
+            float minTime=float.MaxValue;
+            foreach (int id in possibleRoots.Keys)
             {
-                if (minTime > root.Value[bestDestination])
+                float tempTime;
+                Queue<int> orderTemp = new Queue<int>();
+                (tempTime,orderTemp) = graph.FindPath(id,possibleRoots[id],possibleDestinations);\
+                if (tempTime<minTime)
                 {
-                    bestRoot = root.Key;
+                    visitedOrder = orderTemp;
+                    minTime = tempTime;
                 }
             }
-            return (visitedOrders[bestRoot],bestDestination);
+            return (visitedOrder,minTime);
         }
     }
     class QueryConstructor
