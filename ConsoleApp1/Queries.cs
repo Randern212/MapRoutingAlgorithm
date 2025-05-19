@@ -44,7 +44,7 @@ namespace Queries
             {
                 float tempTime;
                 Queue<int> orderTemp = new Queue<int>();
-                (tempTime,orderTemp) = graph.FindPath(id,possibleRoots[id],possibleDestinations);\
+                (tempTime,orderTemp) = graph.FindPath(id,possibleRoots[id],possibleDestinations);
                 if (tempTime<minTime)
                 {
                     visitedOrder = orderTemp;
