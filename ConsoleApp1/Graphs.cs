@@ -25,11 +25,15 @@ namespace Graphs
 
         public (float,Queue<int>) FindPath(int rootID,float initialTime,Dictionary<int,float> possibleDestenations)
         {
-            Queue<int> visitedOrder= new Queue<int>();
+            int[] appendedVertices= new int[vertices.Count];
             float[] timeFromRoot = new float[vertices.Count];
             Array.Fill(timeFromRoot, float.MaxValue);
             timeFromRoot[rootID] = initialTime;
-            float minTime=float.MaxValue;
+            int bestDestination = -1;
+            Queue<int> visitedOrder = new Queue<int>();
+            Array.Fill(appendedVertices, -1);
+
+            float minTime =float.MaxValue;
 
             var priorityQueue = new PriorityQueue<int, float>();
             priorityQueue.Enqueue(rootID, 0);
@@ -52,16 +56,33 @@ namespace Graphs
                         {
                             newTime = newTime + possibleDestenations[neighborID];
                             if(newTime<minTime)
+                            {
                                 minTime= newTime;
+                                bestDestination = neighborID;
+                            }
                         }
 
                         timeFromRoot[neighborID] = newTime;
-                        visitedOrder.Enqueue(currentID);
+                        appendedVertices[neighborID]=(currentID);
                         priorityQueue.Enqueue(neighborID, newTime);
                     }
                 }
             }
-            return (minTime,visitedOrder);
+            if (bestDestination != -1)
+            {
+                var path = new Stack<int>();
+                for (int at = bestDestination; at != -1; at = appendedVertices[at])
+                {
+                    path.Push(at);
+                }
+
+                while (path.Count > 0)
+                {
+                    visitedOrder.Enqueue(path.Pop());
+                }
+            }
+
+            return (minTime, visitedOrder);
         }
 
         public void readDataGraph(string filePath)

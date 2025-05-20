@@ -51,7 +51,7 @@ namespace Queries
                     sourceY[i] = query.sourceY;
                     destinationX[i] = query.destinationX;
                     destinationY[i] = query.destinationY;
-                    R[i] = query.R;
+                    R[i] = query.R/1000;
 
                     if (R[i] <= 0)
                     {
