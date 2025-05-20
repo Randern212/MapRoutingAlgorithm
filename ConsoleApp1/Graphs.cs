@@ -99,9 +99,6 @@ namespace Graphs
                 vertices[to].edges[from] = new Edge { length = length, speed = speed }; 
             }
         }
-
-
-
     }
 
     class GraphConstructor

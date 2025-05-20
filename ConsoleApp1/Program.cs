@@ -6,8 +6,8 @@ namespace main
     class Program
     {
         public static void sendRecieve() {
-            string mapFilePath = "C:\\Users\\sheha\\OneDrive\\Desktop\\[1] MAP ROUTING\\TEST CASES\\[1] Sample Cases\\Input\\map4.txt";
-            string queryFilePath = "C:\\Users\\sheha\\OneDrive\\Desktop\\[1] MAP ROUTING\\TEST CASES\\[1] Sample Cases\\Input\\queries4.txt";
+            string mapFilePath = "TEST CASES\\[1] Sample Cases\\Input\\map4.txt";
+            string queryFilePath = "TEST CASES\\[1] Sample Cases\\Input\\queries4.txt";
             Graph g = new Graph();
             Query q = new Query();
             List<(Queue<int> path, float time)> finalResult;
