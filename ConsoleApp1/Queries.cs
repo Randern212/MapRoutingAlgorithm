@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Queries
 {
 
-    class Queury
+    class Query
     {
         public float[] sourceX;
         public float[] sourceY;
@@ -19,8 +19,8 @@ namespace Queries
         public float[] R;
         public static int numOfQueries;
 
-        public Queury() { }
-        private void readQ(string filePath)
+        public Query() { }
+        public void readQuery(string filePath)
         {
             try
             {
@@ -32,21 +32,18 @@ namespace Queries
                 var queryTuples = QueryReader.ReadQueries(filePath);
                 numOfQueries = queryTuples.Count;
 
-                // Initialize arrays
                 sourceX = new float[numOfQueries];
                 sourceY = new float[numOfQueries];
                 destinationX = new float[numOfQueries];
                 destinationY = new float[numOfQueries];
                 R = new float[numOfQueries];
 
-                // Validate we have enough queries
                 if (queryTuples.Count != numOfQueries)
                 {
                     throw new InvalidDataException(
                         $"Header claims {numOfQueries} queries but found {queryTuples.Count}");
                 }
 
-                // Load data
                 for (int i = 0; i < numOfQueries; i++)
                 {
                     var query = queryTuples[i];
@@ -56,7 +53,6 @@ namespace Queries
                     destinationY[i] = query.destinationY;
                     R[i] = query.R;
 
-                    // Optional: Validate values
                     if (R[i] <= 0)
                     {
                         throw new InvalidDataException(
@@ -66,9 +62,8 @@ namespace Queries
             }
             catch (Exception ex)
             {
-                // Log error or handle it appropriately
                 Console.WriteLine($"Error reading queries: {ex.Message}");
-                throw; // Re-throw if you want calling code to handle it
+                throw;
             }
         }
 
@@ -109,25 +104,32 @@ namespace Queries
             return (visitedOrder,minTime);
         }
 
-        public static void mainn(string filePath)
+        public List<(Queue<int> path, float time)> mainn(string queryFilePath, string mapFilePath)
         {
             Graph g = new Graph();
-            //Query query = new Query();
-            Queury query = new Queury();
-            query.readQ(filePath);
-            for (int i = 0; i < numOfQueries; i++)
+            g.readDataGraph(mapFilePath);
+
+            Query query = new Query();
+            query.readQuery(queryFilePath);
+
+            List<(Queue<int>, float)> results = new List<(Queue<int>, float)>();
+
+            for (int i = 0; i < Query.numOfQueries; i++)
             {
-                //call output function  here and take return value of measureTrip(g,i)
-                //as printOutput(query.measureTrip(g, i);
-                query.measureTrip(g, i);
+                var result = query.measureTrip(g, i);
+                results.Add(result);
             }
+
+            return results;
         }
+
+
     }
     class QueryConstructor
     {
-        public static Queury construct()
+        public static Query construct()
         {
-            Queury queury = new Queury();
+            Query queury = new Query();
 
             return queury;
         }
