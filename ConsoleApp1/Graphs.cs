@@ -86,16 +86,7 @@ namespace Graphs
         }
 
 
-        //private int edgeCount=-1;
-        //private void setEdgeCount(int eC)
-        //{
-        //    edgeCount = eC;
-        //}
-        //public int getEdgeCount()
-        //{
-        //    return edgeCount;
-        //}
-       
+        
         
    
 

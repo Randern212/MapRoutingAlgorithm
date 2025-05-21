@@ -44,19 +44,21 @@ namespace main
             return (vertices, edgeCount);
         }
 
-        public static void sendRecieve()
+        public static (Dictionary<int, Vertex> graphVertices, int totalEdges, List<(float sourceX, float sourceY, float destinationX, float destinationY, float R)> queryTuples) readInputs()
         {
+            // Construct file paths
             string projectDir = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
             string mapFilePath = Path.Combine(projectDir, "ConsoleApp1", "TEST CASES", "[1] Sample Cases", "Input", "map5.txt");
             string queryFilePath = Path.Combine(projectDir, "ConsoleApp1", "TEST CASES", "[1] Sample Cases", "Input", "queries5.txt");
-            Query q = new Query();
+
+            // Read queries from file
             var queryTuples = QueryReader.ReadQueries(queryFilePath);
 
+            // Read graph from file
             var (graphVertices, totalEdges) = Program.readDataGraph(mapFilePath);
 
-
-            var finalResult = q.mainn(queryFilePath, mapFilePath,graphVertices,totalEdges, queryTuples);
-            printOutput(finalResult);
+            // Return all three items as a tuple
+            return (graphVertices, totalEdges, queryTuples);
         }
 
         public static void printOutput(List<(Queue<int> path, float time, float walkedDist, float veicledDist, float allDist)> finalResult)
@@ -88,7 +90,17 @@ namespace main
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            sendRecieve();
+            //sendRecieve();
+            var (graphVertices, totalEdges, queryTuples) = readInputs();
+
+            Query q = new Query();
+            //Stopwatch stopwatch2 = new Stopwatch();
+            //stopwatch2.Start();
+            var finalResult = q.mainn(graphVertices, totalEdges, queryTuples);
+            //stopwatch2.Stop();
+            //Console.WriteLine($"{stopwatch2.ElapsedMilliseconds} ms");
+
+            printOutput(finalResult);
             stopwatch.Stop();
             Console.WriteLine(); 
 
@@ -97,17 +109,19 @@ namespace main
 
 
         }
+  
+    
     }
 }
 
 public static class QueryReader
 {
-    public static List<(float sourceX, float sourceY, float destinationX, float destinationY, float R, int numQueries)> ReadQueries(string filePath)
+    public static List<(float sourceX, float sourceY, float destinationX, float destinationY, float R)> ReadQueries(string filePath)
     {
         var lines = File.ReadAllLines(filePath).ToList();
         int numQueries = int.Parse(lines[0]);
 
-        var queries = new List<(float, float, float, float, float, int)>();
+        var queries = new List<(float, float, float, float, float)>(); // 5-element tuples
 
         for (int i = 1; i <= numQueries; i++)
         {
@@ -120,9 +134,10 @@ public static class QueryReader
             float destinationY = float.Parse(parts[3]);
             float R = float.Parse(parts[4]);
 
-            queries.Add((sourceX, sourceY, destinationX, destinationY, R, numQueries));
+            queries.Add((sourceX, sourceY, destinationX, destinationY, R)); // match 5-element tuple
         }
 
         return queries;
     }
+
 }

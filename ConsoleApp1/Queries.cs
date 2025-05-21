@@ -21,17 +21,13 @@ namespace Queries
         public static int numOfQueries;
 
         public Query() { }
-        public void readQuery(string filePath)
+        public void storeData( List<(float sourceX, float sourceY, float destinationX, float destinationY, float R)> queries)
         {
-            try
-            {
-                if (!File.Exists(filePath))
-                {
-                    throw new FileNotFoundException($"Query file not found: {filePath}");
-                }
+           
+               
 
-                var queryTuples = QueryReader.ReadQueries(filePath);
-                numOfQueries = queryTuples.Count;
+                //var queryTuples = QueryReader.ReadQueries(filePath);
+                numOfQueries = queries.Count; //queryTuples.Count;
 
                 sourceX = new float[numOfQueries];
                 sourceY = new float[numOfQueries];
@@ -39,15 +35,15 @@ namespace Queries
                 destinationY = new float[numOfQueries];
                 R = new float[numOfQueries];
 
-                if (queryTuples.Count != numOfQueries)
+                if (queries.Count != numOfQueries)
                 {
                     throw new InvalidDataException(
-                        $"Header claims {numOfQueries} queries but found {queryTuples.Count}");
+                        $"Header claims {numOfQueries} queries but found {queries.Count}");
                 }
 
                 for (int i = 0; i < numOfQueries; i++)
                 {
-                    var query = queryTuples[i];
+                    var query = queries[i];
                     sourceX[i] = query.sourceX;
                     sourceY[i] = query.sourceY;
                     destinationX[i] = query.destinationX;
@@ -60,12 +56,7 @@ namespace Queries
                             $"Invalid R value {R[i]} at query {i + 1}. Must be positive.");
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error reading queries: {ex.Message}");
-                throw;
-            }
+          
         }
 
         public Queue<int> globalVisitedOrder = new Queue<int>();
@@ -108,8 +99,6 @@ namespace Queries
             return (visitedOrder, minTime);
         }
 
-        //float walkedToRootX= -1, walkedToRootY = -1,
-        //    walkedToDistenationX = -1, walkedToDistenationY = -1;
         public float calculateWalkedDistance(Dictionary<int, Vertex> vertices, int i)
         {
             if (globalVisitedOrder == null || globalVisitedOrder.Count < 2)
@@ -155,6 +144,7 @@ namespace Queries
             return totalDistance;
         }
 
+       
         public (float walkedDist, float veicledist, float allDist) calcAllMovDistance(Graph graph, int i, Dictionary<int, Vertex> vertices)
         {
             float walkedDist = -1, veicledist = -1, allDist = -1;
@@ -163,29 +153,28 @@ namespace Queries
             allDist = walkedDist + veicledist;
             return (walkedDist,veicledist,allDist);
         }
+        
+        
+        
         public List<(Queue<int> Path, float Time, float WalkedDist, float VeicledDist, float AllDist)>
         
             
-            mainn(string queryFilePath, string mapFilePath, Dictionary<int, Vertex> vertices,int edgesCount
-            , List<(float sourceX, float sourceY, float destinationX, float destinationY, float R, int numQueries)> queries)
+            mainn( Dictionary<int, Vertex> vertices,int edgesCount
+            , List<(float sourceX, float sourceY, float destinationX, float destinationY, float R)> queries )
         {
             Graph g = new Graph();
-            //g.readDataGraph(mapFilePath);
 
             Query query = new Query();
-            query.readQuery(queryFilePath);
+            query.storeData(queries);
 
             var allResults = new List<(Queue<int>, float, float, float, float)>();
 
             for (int i = 0; i < Query.numOfQueries; i++)
             {
-                // Get path and time
                 var (path, time) = query.measureTrip(vertices, i);
 
-                // Get all distances
                 var (walkedDist, veicledDist, allDist) = query.calcAllMovDistance(g, i,vertices);
 
-                // Add all information as a single tuple
                 allResults.Add((path, time, walkedDist, veicledDist, allDist));
             }
 
