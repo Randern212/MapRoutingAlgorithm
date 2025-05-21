@@ -8,23 +8,22 @@ using System.Threading.Tasks;
 
 namespace Graphs
 {
-    class Vertex
+  public class Vertex
     {
         public float positionX;
         public float positionY;
         public Dictionary<int, Edge> edges;
     }
-    class Edge
+   public class Edge
     {
         public float length;
         public float speed;
         public float time => length/speed;
     }
-    class Graph
+   public class Graph
     { 
-        public Dictionary<int, Vertex> vertices;
 
-        public (float, Queue<int>) FindPath(int rootID, float initialTime, Dictionary<int, float> possibleDestenations)
+        public (float, Queue<int>) FindPath(int rootID, float initialTime, Dictionary<int, float> possibleDestenations, Dictionary<int, Vertex> vertices)
         {
             int[] appendedVertices = new int[vertices.Count];
             float[] timeFromRoot = new float[vertices.Count];
@@ -87,52 +86,18 @@ namespace Graphs
         }
 
 
-        private int edgeCount=-1;
-        private void setEdgeCount(int eC)
-        {
-            edgeCount = eC;
-        }
-        public int getEdgeCount()
-        {
-            return edgeCount;
-        }
-        public void readDataGraph(string filePath)
-        {
-            vertices = new Dictionary<int, Vertex>();
-
-            var lines = File.ReadAllLines(filePath);
-            int vertexCount = int.Parse(lines[0]);
-
-            for (int i = 1; i <= vertexCount; i++)
-            {
-                var parts = lines[i].Split(' ');
-                int id = int.Parse(parts[0]);
-                float x = float.Parse(parts[1]);
-                float y = float.Parse(parts[2]);
-
-                vertices[id] = new Vertex
-                {
-                    positionX = x,
-                    positionY = y,
-                    edges = new Dictionary<int, Edge>()
-                };
-            }
-
-            int edgeCount = int.Parse(lines[vertexCount + 1]);
-            setEdgeCount(edgeCount);
-            for (int i = vertexCount + 2; i < vertexCount + 2 + edgeCount; i++)
-            {
-                var parts = lines[i].Split(' ');
-                int from = int.Parse(parts[0]);
-                int to = int.Parse(parts[1]);
-                float length = float.Parse(parts[2]);
-                float speed = float.Parse(parts[3]);
-
-                vertices[from].edges[to] = new Edge { length = length, speed = speed };
-                vertices[to].edges[from] = new Edge { length = length, speed = speed }; 
-            }
-        }
-
+        //private int edgeCount=-1;
+        //private void setEdgeCount(int eC)
+        //{
+        //    edgeCount = eC;
+        //}
+        //public int getEdgeCount()
+        //{
+        //    return edgeCount;
+        //}
+       
+        
+   
 
 
     }
