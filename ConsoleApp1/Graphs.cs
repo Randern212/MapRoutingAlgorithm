@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,9 +24,9 @@ namespace Graphs
     { 
         public Dictionary<int, Vertex> vertices;
 
-        public (float,Queue<int>) FindPath(int rootID,float initialTime,Dictionary<int,float> possibleDestenations)
+        public (float, Queue<int>) FindPath(int rootID, float initialTime, Dictionary<int, float> possibleDestenations)
         {
-            int[] appendedVertices= new int[vertices.Count];
+            int[] appendedVertices = new int[vertices.Count];
             float[] timeFromRoot = new float[vertices.Count];
             Array.Fill(timeFromRoot, float.MaxValue);
             timeFromRoot[rootID] = initialTime;
@@ -33,7 +34,7 @@ namespace Graphs
             Queue<int> visitedOrder = new Queue<int>();
             Array.Fill(appendedVertices, -1);
 
-            float minTime =float.MaxValue;
+            float minTime = float.MaxValue;
 
             var priorityQueue = new PriorityQueue<int, float>();
             priorityQueue.Enqueue(rootID, 0);
@@ -55,15 +56,15 @@ namespace Graphs
                         if (possibleDestenations.ContainsKey(neighborID))
                         {
                             newTime = newTime + possibleDestenations[neighborID];
-                            if(newTime<minTime)
+                            if (newTime < minTime)
                             {
-                                minTime= newTime;
+                                minTime = newTime;
                                 bestDestination = neighborID;
                             }
                         }
 
                         timeFromRoot[neighborID] = newTime;
-                        appendedVertices[neighborID]=(currentID);
+                        appendedVertices[neighborID] = (currentID);
                         priorityQueue.Enqueue(neighborID, newTime);
                     }
                 }
@@ -85,6 +86,16 @@ namespace Graphs
             return (minTime, visitedOrder);
         }
 
+
+        private int edgeCount=-1;
+        private void setEdgeCount(int eC)
+        {
+            edgeCount = eC;
+        }
+        public int getEdgeCount()
+        {
+            return edgeCount;
+        }
         public void readDataGraph(string filePath)
         {
             vertices = new Dictionary<int, Vertex>();
@@ -108,6 +119,7 @@ namespace Graphs
             }
 
             int edgeCount = int.Parse(lines[vertexCount + 1]);
+            setEdgeCount(edgeCount);
             for (int i = vertexCount + 2; i < vertexCount + 2 + edgeCount; i++)
             {
                 var parts = lines[i].Split(' ');
@@ -120,6 +132,9 @@ namespace Graphs
                 vertices[to].edges[from] = new Edge { length = length, speed = speed }; 
             }
         }
+
+
+
     }
 
     class GraphConstructor

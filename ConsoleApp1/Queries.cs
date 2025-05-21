@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -67,44 +68,102 @@ namespace Queries
             }
         }
 
+        public Queue<int> globalVisitedOrder = new Queue<int>();
 
-        Func<float, float, float, float,float> euclideanDistance = (x1, y1, x2, y2) => MathF.Sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2))); 
-        public (Queue<int>,float) measureTrip(Graph graph, int i)
+        Func<float, float, float, float,float> euclideanDistance = (x1, y1, x2, y2) => MathF.Sqrt(((x1-x2)*(x1-x2))+((y1-y2)*(y1-y2)));
+        public (Queue<int>, float) measureTrip(Graph graph, int i)
         {
             Dictionary<int, float> possibleRoots = new Dictionary<int, float>();
-            Dictionary<int,float> possibleDestinations  = new Dictionary<int,float>(); 
-            foreach(int id in graph.vertices.Keys) 
+            Dictionary<int, float> possibleDestinations = new Dictionary<int, float>();
+            foreach (int id in graph.vertices.Keys)
             {
                 float walkToRootDistance = euclideanDistance(sourceX[i], sourceY[i], graph.vertices[id].positionX, graph.vertices[id].positionY);
 
                 if (walkToRootDistance <= R[i])
                 {
-                    possibleRoots[id]=walkToRootDistance/5;
+                    possibleRoots[id] = walkToRootDistance / 5;
                 }
                 float walkToDestinationDistance = euclideanDistance(destinationX[i], destinationY[i], graph.vertices[id].positionX, graph.vertices[id].positionY);
-                if ( walkToDestinationDistance <= R[i])
+                if (walkToDestinationDistance <= R[i])
                 {
-                    possibleDestinations[id]= walkToDestinationDistance/5;
+                    possibleDestinations[id] = walkToDestinationDistance / 5;
                 }
             }
 
             Queue<int> visitedOrder = new Queue<int>();
-            float minTime=float.MaxValue;
+            float minTime = float.MaxValue;
             foreach (int id in possibleRoots.Keys)
             {
                 float tempTime;
                 Queue<int> orderTemp = new Queue<int>();
-                (tempTime,orderTemp) = graph.FindPath(id,possibleRoots[id],possibleDestinations);
-                if (tempTime<minTime)
+                (tempTime, orderTemp) = graph.FindPath(id, possibleRoots[id], possibleDestinations);
+                if (tempTime < minTime)
                 {
                     visitedOrder = orderTemp;
                     minTime = tempTime;
                 }
             }
-            return (visitedOrder,minTime);
+            globalVisitedOrder = visitedOrder;
+            return (visitedOrder, minTime);
         }
 
-        public List<(Queue<int> path, float time)> mainn(string queryFilePath, string mapFilePath)
+        //float walkedToRootX= -1, walkedToRootY = -1,
+        //    walkedToDistenationX = -1, walkedToDistenationY = -1;
+        public float calculateWalkedDistance(Graph graph, int i)
+        {
+            if (globalVisitedOrder == null || globalVisitedOrder.Count < 2)
+                return 0; // Return 0 instead of -1 for invalid paths
+
+            int[] path = globalVisitedOrder.ToArray();
+            int firstNode = path[0];
+            int lastNode = path[path.Length - 1];
+
+            // Calculate walking distance from source to first node
+            float walkToRoot = euclideanDistance(sourceX[i], sourceY[i],
+                                               graph.vertices[firstNode].positionX,
+                                               graph.vertices[firstNode].positionY);
+
+            // Calculate walking distance from last node to destination
+            float walkToDest = euclideanDistance(graph.vertices[lastNode].positionX,
+                                                graph.vertices[lastNode].positionY,
+                                                destinationX[i], destinationY[i]);
+
+            return walkToRoot + walkToDest;
+        }
+
+        public float calcVeicleMovDistance(Graph graph)
+        {
+            if (globalVisitedOrder == null || globalVisitedOrder.Count < 2)
+                return 0;
+
+            float totalDistance = 0;
+            int[] path = globalVisitedOrder.ToArray();
+
+            for (int i = 0; i < path.Length - 1; i++)
+            {
+                int from = path[i];
+                int to = path[i + 1];
+
+                if (graph.vertices.TryGetValue(from, out var fromVertex) &&
+                    fromVertex.edges.TryGetValue(to, out var edge))
+                {
+                    totalDistance += edge.length;
+                }
+            }
+
+            return totalDistance;
+        }
+
+        public (float walkedDist, float veicledist, float allDist) calcAllMovDistance(Graph graph, int i)
+        {
+            float walkedDist = -1, veicledist = -1, allDist = -1;
+            walkedDist = calculateWalkedDistance(graph, i);
+            veicledist = calcVeicleMovDistance(graph);
+            allDist = walkedDist + veicledist;
+            return (walkedDist,veicledist,allDist);
+        }
+        public List<(Queue<int> Path, float Time, float WalkedDist, float VeicledDist, float AllDist)>
+        mainn(string queryFilePath, string mapFilePath)
         {
             Graph g = new Graph();
             g.readDataGraph(mapFilePath);
@@ -112,17 +171,22 @@ namespace Queries
             Query query = new Query();
             query.readQuery(queryFilePath);
 
-            List<(Queue<int>, float)> results = new List<(Queue<int>, float)>();
+            var allResults = new List<(Queue<int>, float, float, float, float)>();
 
             for (int i = 0; i < Query.numOfQueries; i++)
             {
-                var result = query.measureTrip(g, i);
-                results.Add(result);
+                // Get path and time
+                var (path, time) = query.measureTrip(g, i);
+
+                // Get all distances
+                var (walkedDist, veicledDist, allDist) = query.calcAllMovDistance(g, i);
+
+                // Add all information as a single tuple
+                allResults.Add((path, time, walkedDist, veicledDist, allDist));
             }
 
-            return results;
+            return allResults;
         }
-
 
     }
     class QueryConstructor
