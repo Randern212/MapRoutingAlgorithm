@@ -63,25 +63,19 @@ namespace main
 
         public static void printOutput(List<(Queue<int> path, float time, float walkedDist, float veicledDist, float allDist)> finalResult)
         {
-            for (int i = 0; i < finalResult.Count; i++)
+            foreach (var (path, time, walkedDist, veicledDist, allDist) in finalResult)
             {
-                var (path, time, walkedDist, veicledDist, allDist) = finalResult[i];
-
-                Console.WriteLine($"Query #{i + 1}:");
-
                 if (path.Count == 0 || walkedDist < 0 || veicledDist < 0)
                 {
-                    Console.WriteLine("No valid path found within walking range");
-                    Console.WriteLine(new string('-', 40));
+                    Console.WriteLine("No valid path found within walking range\n");
                     continue;
                 }
 
                 Console.WriteLine(string.Join(" ", path));
-                Console.WriteLine($"{time*60:F2} mins");
+                Console.WriteLine($"{time * 60:F2} mins");
                 Console.WriteLine($"{allDist:F2} km");
                 Console.WriteLine($"{walkedDist:F2} km");
-                Console.WriteLine($"{veicledDist:F2} km");
-                Console.WriteLine(new string('-', 40));
+                Console.WriteLine($"{veicledDist:F2} km\n");
             }
         }
 
@@ -94,23 +88,53 @@ namespace main
             var (graphVertices, totalEdges, queryTuples) = readInputs();
 
             Query q = new Query();
-            //Stopwatch stopwatch2 = new Stopwatch();
-            //stopwatch2.Start();
+            Stopwatch stopwatch2 = new Stopwatch();
+            stopwatch2.Start();
             var finalResult = q.mainn(graphVertices, totalEdges, queryTuples);
-            //stopwatch2.Stop();
-            //Console.WriteLine($"{stopwatch2.ElapsedMilliseconds} ms");
+            stopwatch2.Stop();
 
             printOutput(finalResult);
+            string outputFilePath = Path.Combine(Directory.GetCurrentDirectory(), "C:\\Users\\sheha\\OneDrive\\Desktop\\AlgoProject\\MapRoutingAlgorithm\\ConsoleApp1\\output.txt");
+            saveOutputToFile(finalResult, outputFilePath);
+            using (StreamWriter writer = File.AppendText(outputFilePath))
+            {
+                writer.WriteLine($"{stopwatch2.ElapsedMilliseconds / 10} ms");
+                writer.WriteLine();
+                writer.WriteLine($"{stopwatch.ElapsedMilliseconds / 10} ms");
+            }
             stopwatch.Stop();
+            Console.WriteLine($"{stopwatch2.ElapsedMilliseconds/10} ms");
+
             Console.WriteLine(); 
 
-            Console.WriteLine($"{stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"{stopwatch.ElapsedMilliseconds/10} ms");
 
 
 
         }
-  
-    
+
+
+        public static void saveOutputToFile(List<(Queue<int> path, float time, float walkedDist, float veicledDist, float allDist)> finalResult, string filePath)
+        {
+            using StreamWriter writer = new StreamWriter(filePath);
+
+            foreach (var (path, time, walkedDist, veicledDist, allDist) in finalResult)
+            {
+                if (path.Count == 0 || walkedDist < 0 || veicledDist < 0)
+                {
+                    writer.WriteLine("No valid path found within walking range\n");
+                    continue;
+                }
+
+                writer.WriteLine(string.Join(" ", path));
+                writer.WriteLine($"{time * 60:F2} mins");
+                writer.WriteLine($"{allDist:F2} km");
+                writer.WriteLine($"{walkedDist:F2} km");
+                writer.WriteLine($"{veicledDist:F2} km\n");
+            }
+        }
+
+
     }
 }
 
