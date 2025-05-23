@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "C:\\Users\\sheha\\OneDrive\\Desktop\\AlgoProject\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj": {}
   },
   "projects": {
@@ -12,6 +13,19 @@
         "projectPath": "C:\\Users\\sheha\\OneDrive\\Desktop\\AlgoProject\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj",
         "packagesPath": "C:\\Users\\sheha\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\sheha\\OneDrive\\Desktop\\AlgoProject\\MapRoutingAlgorithm\\ConsoleApp1\\obj\\",
+=======
+    "C:\\Users\\sheha\\OneDrive\\Desktop\\New folder\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\sheha\\OneDrive\\Desktop\\New folder\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\sheha\\OneDrive\\Desktop\\New folder\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj",
+        "projectName": "ConsoleApp1",
+        "projectPath": "C:\\Users\\sheha\\OneDrive\\Desktop\\New folder\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj",
+        "packagesPath": "C:\\Users\\sheha\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sheha\\OneDrive\\Desktop\\New folder\\MapRoutingAlgorithm\\ConsoleApp1\\obj\\",
+>>>>>>> shehap
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

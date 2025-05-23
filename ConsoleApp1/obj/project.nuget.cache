@@ -1,8 +1,14 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "6ejdjVFP69s=",
   "success": true,
   "projectFilePath": "C:\\Users\\sheha\\OneDrive\\Desktop\\AlgoProject\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj",
+=======
+  "dgSpecHash": "TddcP4F/c88=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\sheha\\OneDrive\\Desktop\\New folder\\MapRoutingAlgorithm\\ConsoleApp1\\ConsoleApp1.csproj",
+>>>>>>> shehap
   "expectedPackageFiles": [],
   "logs": []
 }
