@@ -12,6 +12,7 @@ namespace Graphs
         public float positionX;
         public float positionY;
         public Dictionary<int, Edge> edges;
+        
     }
     class Edge
     {
